@@ -10,10 +10,9 @@ import lombok.Setter;
 public class StoreDTO {
 
     @NoArgsConstructor
-    @AllArgsConstructor
+//    @AllArgsConstructor
     @Getter
     @Setter
-
     public static class Store{
 
     }
