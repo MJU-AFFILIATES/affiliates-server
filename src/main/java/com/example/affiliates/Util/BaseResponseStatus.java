@@ -11,7 +11,16 @@ public enum BaseResponseStatus {
     */
     USER_POST_SIGN_IN(false, 2000, "이미 있는 사용자 학번입니다."),
     USER_POST_NOT_SIGN_IN(false, 2001, "가입하지 않은 사용자 학번입니다."),
-    USER_PASSWORD_NOT_EQUAL(false, 2002, "틀린 비밀번호 입니다.")
+    USER_PASSWORD_NOT_EQUAL(false, 2002, "틀린 비밀번호 입니다."),
+    /*
+     * 9500 : jwt
+     * */
+
+    WRONG_JWT_SIGN_TOKEN(false, 9500, "잘못된 JWT 서명입니다."),
+    EXPIRED_JWT_TOKEN(false, 9501, "만료된 JWT 토큰 입니다."),
+    UNSUPPORTED_JWT_TOKEN(false, 9502, "지원되지 않는 JWT 토큰입니다."),
+    WRONG_JWT_TOKEN(false, 9503, "JWT 토큰이 잘못되었습니다."),
+    NULL_JWT(false,9504, "JWT의 값이 없습니다.");
     ;
 
 

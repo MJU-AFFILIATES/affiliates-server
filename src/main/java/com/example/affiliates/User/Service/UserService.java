@@ -6,6 +6,7 @@ import com.example.affiliates.User.Repository.UserRepository;
 import com.example.affiliates.Util.BaseException;
 import com.example.affiliates.Util.BaseResponseStatus;
 import com.example.affiliates.Util.LoginStatus;
+import com.example.affiliates.Util.Role;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +17,8 @@ public class UserService {
     }
 
     public UserEntity login(UserDTO.Login user) throws BaseException{
-        UserEntity userEntity = this.userRepository.findByUserNum(user.getStudentNum());
+        //에러 처리 필요
+        UserEntity userEntity = this.userRepository.findByUserNum(user.getStudentNum()).get();
 
         // user가 가입 되어 있는지 확인(ID가 맞는지도 확인)
         if(userEntity == null){
@@ -30,7 +32,8 @@ public class UserService {
     }
 
     public void signIn(UserDTO.Login user) throws BaseException {
-        UserEntity userEntity = this.userRepository.findByUserNum(user.getStudentNum());
+        //에러 처리 필요
+        UserEntity userEntity = this.userRepository.findByUserNum(user.getStudentNum()).get();
         if(userEntity != null){
             throw new BaseException(BaseResponseStatus.USER_POST_SIGN_IN);
         }
@@ -38,6 +41,7 @@ public class UserService {
                 .userNum(user.getStudentNum())
                 .password(user.getPassword())
                 .loginStatus(LoginStatus.LOGIN)
+                .role(Role.ROLE_USER)
                 .build();
 
         this.userRepository.save(userEntity);
