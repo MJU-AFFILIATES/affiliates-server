@@ -1,6 +1,8 @@
 package com.example.affiliates.User.Entity;
 
+import com.example.affiliates.Util.BaseEntity;
 import com.example.affiliates.Util.LoginStatus;
+import com.example.affiliates.Util.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "user")
 @NoArgsConstructor
 @DynamicInsert
-public class UserEntity {
+public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userIdx;
@@ -31,11 +33,16 @@ public class UserEntity {
     @Column(columnDefinition = "varchar(10) default 'active'")
     private String status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Builder
-    public UserEntity(String userNum, String password, LoginStatus loginStatus, String status){
+    public UserEntity(String userNum, String password, LoginStatus loginStatus, String status, Role role){
         this.userNum = userNum;
         this.password = password;
         this.loginStatus = loginStatus;
         this.status = status;
+        this.role = role;
     }
 }
