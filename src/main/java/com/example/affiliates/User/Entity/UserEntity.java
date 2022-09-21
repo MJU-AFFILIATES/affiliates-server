@@ -27,6 +27,9 @@ public class UserEntity extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
+    private String nickName;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginStatus loginStatus;
 
@@ -38,11 +41,13 @@ public class UserEntity extends BaseEntity {
     private Role role;
 
     @Builder
-    public UserEntity(String userNum, String password, LoginStatus loginStatus, String status, Role role){
+    public UserEntity(String userNum, String password, LoginStatus loginStatus, String status, Role role,
+                      String nickName){
         this.userNum = userNum;
         this.password = password;
         this.loginStatus = loginStatus;
         this.status = status;
         this.role = role;
+        this.nickName = nickName;
     }
 }

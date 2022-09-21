@@ -1,5 +1,6 @@
 package com.example.affiliates.User.Controller;
 
+import com.example.affiliates.Jwt.DTO.TokenDTO;
 import com.example.affiliates.User.DTO.UserDTO;
 import com.example.affiliates.User.Entity.UserEntity;
 import com.example.affiliates.User.Service.UserService;
@@ -7,6 +8,8 @@ import com.example.affiliates.Util.BaseException;
 import com.example.affiliates.Util.BaseResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/users")
@@ -35,6 +38,13 @@ public class UserController {
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
+    }
+    @PostMapping("/reissue")
+    public BaseResponse<TokenDTO> reissue(@RequestBody TokenDTO tokenRequestDto, HttpServletRequest request) {
+        try {
+            return new BaseResponse<TokenDTO>(userService.reissue(tokenRequestDto, request));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
     }
 }
