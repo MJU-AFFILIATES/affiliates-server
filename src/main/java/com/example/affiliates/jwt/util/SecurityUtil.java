@@ -1,4 +1,4 @@
-package com.example.affiliates.Jwt.Util;
+package com.example.affiliates.jwt.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ public class SecurityUtil {
         if (authentication == null || authentication.getName() == null) {
             throw  new RuntimeException("Security Context 에 인증 정보가 없습니다.");
         }
+
         return authentication.getName();
     }
 }

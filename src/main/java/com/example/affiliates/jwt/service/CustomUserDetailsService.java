@@ -1,4 +1,5 @@
-package com.example.affiliates.Jwt.Service;
+package com.example.affiliates.jwt.service;
+
 
 import com.example.affiliates.User.Entity.UserEntity;
 import com.example.affiliates.User.Repository.UserRepository;
@@ -22,10 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String userNum) throws UsernameNotFoundException {
-        return userRepository.findByUserNum(userNum)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByStudentNum(email)
                 .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException(userNum + " -> 데이터베이스에서 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다."));
 
     }
 
@@ -33,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails(UserEntity user) {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getRole().toString());
         return new User(
-                String.valueOf(user.getUserNum()),
+                String.valueOf(user.getStudentNum()),
                 user.getPassword(),
                 Collections.singleton(grantedAuthority)
         );

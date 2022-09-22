@@ -1,27 +1,29 @@
-package com.example.affiliates.Jwt.Exception;
+package com.example.affiliates.jwt.exception;
 
 import com.example.affiliates.Util.BaseResponse;
 import com.example.affiliates.Util.BaseResponseStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
-    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
+
+    public JwtAccessDeniedHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        // 유효한 자격증명을 제공하지 않고 접근하려 할때 401
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        // 필요한 권한이 없이 접근하려 할때 403
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         String exception = (String) request.getAttribute("exception");
         BaseResponseStatus status;
         if(exception == null) {
@@ -34,17 +36,17 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
          * 토큰이 만료된 경우 예외처리
          */
         if(exception.equals("ExpiredJwtException")) {
-            status = BaseResponseStatus.WRONG_JWT_SIGN_TOKEN;
+            status = BaseResponseStatus.EXPIRED_JWT_TOKEN;
             setResponse(response, status);
             return;
         }
         if(exception.equals("MalformedJwtException")) {
-            status = BaseResponseStatus.EXPIRED_JWT_TOKEN;
+            status = BaseResponseStatus.WRONG_JWT_SIGN_TOKEN;
             setResponse(response, status);
             return;
         }
         if(exception.equals("UnsupportedJwtException")) {
-            status = BaseResponseStatus.EXPIRED_JWT_TOKEN;
+            status = BaseResponseStatus.UNSUPPORTED_JWT_TOKEN;
             setResponse(response, status);
             return;
         }
@@ -54,7 +56,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             return;
         }
     }
-
     private void setResponse(HttpServletResponse response, BaseResponseStatus status) throws IOException {
 
         BaseResponse baseResponse = new BaseResponse(status);

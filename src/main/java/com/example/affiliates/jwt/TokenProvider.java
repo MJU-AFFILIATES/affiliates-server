@@ -1,6 +1,6 @@
-package com.example.affiliates.Jwt;
+package com.example.affiliates.jwt;
 
-import com.example.affiliates.Jwt.DTO.TokenDTO;
+import com.example.affiliates.jwt.DTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

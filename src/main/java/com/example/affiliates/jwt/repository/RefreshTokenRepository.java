@@ -1,6 +1,6 @@
-package com.example.affiliates.Jwt.Repository;
+package com.example.affiliates.jwt.repository;
 
-import com.example.affiliates.Jwt.Entity.RefreshTokenEntity;
+import com.example.affiliates.jwt.entity.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

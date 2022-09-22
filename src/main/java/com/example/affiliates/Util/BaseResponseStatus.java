@@ -12,6 +12,14 @@ public enum BaseResponseStatus {
     USER_POST_SIGN_IN(false, 2000, "이미 있는 사용자 학번입니다."),
     USER_POST_NOT_SIGN_IN(false, 2001, "가입하지 않은 사용자 학번입니다."),
     USER_PASSWORD_NOT_EQUAL(false, 2002, "틀린 비밀번호 입니다."),
+
+
+    /*
+     *5000: database error
+     */
+    PASSWORD_ENCRYPTION_ERROR(false, 4001, "비밀번호 암호화에 실패했습니다."),
+
+
     /*
      * 9500 : jwt
      * */

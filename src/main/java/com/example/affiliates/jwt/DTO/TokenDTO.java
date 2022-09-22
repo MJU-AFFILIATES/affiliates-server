@@ -1,4 +1,5 @@
-package com.example.affiliates.Jwt.DTO;
+package com.example.affiliates.jwt.DTO;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
