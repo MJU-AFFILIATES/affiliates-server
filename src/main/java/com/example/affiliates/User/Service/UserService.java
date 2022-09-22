@@ -11,20 +11,30 @@ import com.example.affiliates.Util.BaseException;
 import com.example.affiliates.Util.BaseResponseStatus;
 import com.example.affiliates.Util.LoginStatus;
 import com.example.affiliates.Util.Role;
+import org.apache.catalina.User;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private TokenProvider tokenProvider;
     private RefreshTokenRepository refreshTokenRepository;
-    public UserService(UserRepository userRepository, TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository){
+    private PasswordEncoder passwordEncoder;
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    public UserService(UserRepository userRepository, TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository,
+                       PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder){
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
     public UserEntity login(UserDTO.Login user) throws BaseException{
@@ -44,15 +54,23 @@ public class UserService {
 
     public void signIn(UserDTO.Login user) throws BaseException {
         //에러 처리 필요
-        UserEntity userEntity = this.userRepository.findByUserNum(user.getStudentNum()).get();
-        if(userEntity != null){
+        Optional<UserEntity> opUser = this.userRepository.findByUserNum(user.getStudentNum());
+        if(opUser.isPresent()){
             throw new BaseException(BaseResponseStatus.USER_POST_SIGN_IN);
         }
-        userEntity = UserEntity.builder()
+        String password = user.getPassword();
+        try{
+            String encodedPwd = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPwd);
+        }catch (Exception e){
+            throw new BaseException(BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR);
+        }
+        UserEntity userEntity = UserEntity.builder()
                 .userNum(user.getStudentNum())
                 .password(user.getPassword())
                 .loginStatus(LoginStatus.LOGIN)
                 .role(Role.ROLE_USER)
+                .nickName(user.getNickName())
                 .build();
 
         this.userRepository.save(userEntity);
