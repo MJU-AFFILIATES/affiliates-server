@@ -1,4 +1,4 @@
-package com.example.affiliates.Jwt.Entity;
+package com.example.affiliates.jwt.entity;
 
 import com.example.affiliates.Util.BaseEntity;
 import lombok.Builder;
@@ -9,9 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Getter
 @NoArgsConstructor
-@Table(name = "token")
+@Table(name = "refresh_token")
 @Entity
 public class RefreshTokenEntity extends BaseEntity {
 
