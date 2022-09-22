@@ -37,20 +37,18 @@ public class UserService {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    public UserEntity login(UserDTO.Login user) throws BaseException{
-        //에러 처리 필요
-        UserEntity userEntity = this.userRepository.findByStudentNum(user.getStudentNum()).get();
-
+    public TokenDTO login(UserDTO.Login user) throws BaseException{
         // user가 가입 되어 있는지 확인(ID가 맞는지도 확인)
-        if(userEntity == null){
+        Optional<UserEntity> opUser = this.userRepository.findByStudentNum(user.getStudentNum());
+        if(!opUser.isEmpty()){
+            // PASSWORD 맞는지 확인
+            if(!passwordEncoder.matches(user.getPassword(), opUser.get().getPassword())) { // 그냥 받아온 password를 넣으면 알아서 암호화해서 비교함.
+                throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
+            }
+            return token(user);
+        }else{
             throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
         }
-        // PASSWORD 맞는지 확인
-        if(!user.getPassword().equals(userEntity.getPassword())){
-            throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
-        }
-        System.out.println(this.token(user));
-        return userEntity;
     }
 
     public TokenDTO token(UserDTO.Login user){
@@ -72,7 +70,10 @@ public class UserService {
 
     public TokenDTO signIn(UserDTO.Login user) throws BaseException {
         if(user.getStudentNum() == null || user.getNickName() == null || user.getPassword() == null){
-            throw new BaseException(BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR);
+            throw new BaseException(BaseResponseStatus.USER_DONOT_WRITE_INFO);
+        }
+        if(this.userRepository.existsByStudentNum(user.getStudentNum())){
+            throw new BaseException(BaseResponseStatus.EXIST_USER_NUM);
         }
         String password = user.getPassword();
         try{
