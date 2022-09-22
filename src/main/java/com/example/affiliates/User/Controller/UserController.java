@@ -19,9 +19,13 @@ public class UserController {
     public UserController(UserService userService){
         this.userService = userService;
     }
+
+    /*
+    * 장채은 : 로그인
+    * */
     @ResponseBody
     @PostMapping("/login")
-    public  BaseResponse<UserEntity> Login(@RequestBody UserDTO.Login user){
+    public  BaseResponse<TokenDTO> Login(@RequestBody UserDTO.Login user){
         try {
             return new BaseResponse<>(this.userService.login(user));
         } catch (BaseException e) {
@@ -29,16 +33,22 @@ public class UserController {
         }
     }
 
+    /*
+    * 장채은: 회원가입
+    * */
     @ResponseBody
     @PostMapping("/sign-in")
     public BaseResponse<TokenDTO> signIn(@RequestBody UserDTO.Login user){
         try {
-
             return new BaseResponse<>(this.userService.signIn(user));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
     }
+    
+    /*
+    * 장채은: 토큰 재발급
+    * */
     @PostMapping("/reissue")
     public BaseResponse<TokenDTO> reissue(@RequestBody TokenDTO tokenRequestDto, HttpServletRequest request) {
         try {
