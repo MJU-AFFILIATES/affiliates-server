@@ -21,7 +21,7 @@ public class UserEntity extends BaseEntity {
     private Long userIdx;
 
     @Column(nullable = false)
-    private String email;
+    private String studentNum;
 
     @Column(nullable = false, length = 200)
     private String password;
@@ -41,9 +41,9 @@ public class UserEntity extends BaseEntity {
     private Role role;
 
     @Builder
-    public UserEntity(String email, String password, LoginStatus loginStatus, String status, Role role,
+    public UserEntity(String studentNum, String password, LoginStatus loginStatus, String status, Role role,
                       String nickName){
-        this.email = email;
+        this.studentNum = studentNum;
         this.password = password;
         this.loginStatus = loginStatus;
         this.status = status;

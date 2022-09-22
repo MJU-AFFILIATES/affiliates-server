@@ -39,7 +39,7 @@ public class UserService {
 
     public UserEntity login(UserDTO.Login user) throws BaseException{
         //에러 처리 필요
-        UserEntity userEntity = this.userRepository.findByEmail(user.getEmail()).get();
+        UserEntity userEntity = this.userRepository.findByStudentNum(user.getStudentNum()).get();
 
         // user가 가입 되어 있는지 확인(ID가 맞는지도 확인)
         if(userEntity == null){
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     public TokenDTO token(UserDTO.Login user){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getStudentNum(), user.getPassword());
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -71,7 +71,7 @@ public class UserService {
     }
 
     public TokenDTO signIn(UserDTO.Login user) throws BaseException {
-        if(user.getEmail() == null || user.getNickName() == null || user.getPassword() == null){
+        if(user.getStudentNum() == null || user.getNickName() == null || user.getPassword() == null){
             throw new BaseException(BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR);
         }
         String password = user.getPassword();
@@ -82,7 +82,7 @@ public class UserService {
             throw new BaseException(BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR);
         }
         UserEntity userEntity = UserEntity.builder()
-                .email(user.getEmail())
+                .studentNum(user.getStudentNum())
                 .password(user.getPassword())
                 .nickName(user.getNickName())
                 .loginStatus(LoginStatus.LOGIN)

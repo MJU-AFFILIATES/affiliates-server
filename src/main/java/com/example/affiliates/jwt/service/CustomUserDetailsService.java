@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        return userRepository.findByStudentNum(email)
                 .map(this::createUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다."));
 
@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails(UserEntity user) {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(user.getRole().toString());
         return new User(
-                String.valueOf(user.getEmail()),
+                String.valueOf(user.getStudentNum()),
                 user.getPassword(),
                 Collections.singleton(grantedAuthority)
         );

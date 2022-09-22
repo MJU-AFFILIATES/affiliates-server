@@ -14,7 +14,7 @@ public class UserDTO {
     @Getter
     @Setter
     public static class Login{
-        private String email;
+        private String studentNum;
         private String nickName;
         private String password;
     }
