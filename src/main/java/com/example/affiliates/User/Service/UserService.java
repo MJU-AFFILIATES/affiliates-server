@@ -53,18 +53,13 @@ public class UserService {
 
     public TokenDTO token(UserDTO.Login user){
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getStudentNum(), user.getPassword());
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDTO tokenDto = tokenProvider.generateTokenDto(authentication, authentication.getName());
-        // 4. RefreshToken 저장
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
                 .build();
         refreshTokenRepository.save(refreshToken);
-        // 5. 토큰 발급
         return tokenDto;
     }
 
@@ -75,7 +70,11 @@ public class UserService {
         if(this.userRepository.existsByStudentNum(user.getStudentNum())){
             throw new BaseException(BaseResponseStatus.EXIST_USER_NUM);
         }
+        if(this.userRepository.existsByNickName(user.getNickName())){
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
+        }
         String password = user.getPassword();
+
         try{
             String encodedPwd = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPwd);

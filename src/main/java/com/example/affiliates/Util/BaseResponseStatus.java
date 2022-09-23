@@ -13,6 +13,7 @@ public enum BaseResponseStatus {
     USER_POST_NOT_SIGN_IN(false, 2001, "가입하지 않았거나, 아이디/비밀번호가 틀렸습니다."),
     USER_DONOT_WRITE_INFO(false, 2002,"정보를 작성하지 않았습니다."),
     EXIST_USER_NUM(false, 2003, "이미 등록된 학번 입니다."),
+    EXIST_NICKNAME(false, 2004, "중복된 닉네임입니다."),
 
 
     /*
