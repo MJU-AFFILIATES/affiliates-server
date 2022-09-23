@@ -14,7 +14,7 @@ public enum BaseResponseStatus {
     USER_DONOT_WRITE_INFO(false, 2002,"정보를 작성하지 않았습니다."),
     EXIST_USER_NUM(false, 2003, "이미 등록된 학번 입니다."),
     EXIST_NICKNAME(false, 2004, "중복된 닉네임입니다."),
-
+    REGEX_PWD(false, 2005, "비밀번호 양식에 맞게 변경해주세요."),
 
     /*
      *5000: database error

@@ -3,10 +3,7 @@ package com.example.affiliates.User.Service;
 import com.example.affiliates.User.DTO.UserDTO;
 import com.example.affiliates.User.Entity.UserEntity;
 import com.example.affiliates.User.Repository.UserRepository;
-import com.example.affiliates.Util.BaseException;
-import com.example.affiliates.Util.BaseResponseStatus;
-import com.example.affiliates.Util.LoginStatus;
-import com.example.affiliates.Util.Role;
+import com.example.affiliates.Util.*;
 import com.example.affiliates.jwt.DTO.TokenDTO;
 import com.example.affiliates.jwt.TokenProvider;
 import com.example.affiliates.jwt.entity.RefreshTokenEntity;
@@ -19,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static com.example.affiliates.Util.RegexPattern.isRegexPwd;
 
 @Service
 public class UserService {
@@ -74,7 +73,9 @@ public class UserService {
             throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
         }
         String password = user.getPassword();
-
+        if(!isRegexPwd(password)){
+            throw new BaseException(BaseResponseStatus.REGEX_PWD);
+        }
         try{
             String encodedPwd = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPwd);
