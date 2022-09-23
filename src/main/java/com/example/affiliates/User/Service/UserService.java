@@ -3,10 +3,7 @@ package com.example.affiliates.User.Service;
 import com.example.affiliates.User.DTO.UserDTO;
 import com.example.affiliates.User.Entity.UserEntity;
 import com.example.affiliates.User.Repository.UserRepository;
-import com.example.affiliates.Util.BaseException;
-import com.example.affiliates.Util.BaseResponseStatus;
-import com.example.affiliates.Util.LoginStatus;
-import com.example.affiliates.Util.Role;
+import com.example.affiliates.Util.*;
 import com.example.affiliates.jwt.DTO.TokenDTO;
 import com.example.affiliates.jwt.TokenProvider;
 import com.example.affiliates.jwt.entity.RefreshTokenEntity;
@@ -19,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static com.example.affiliates.Util.RegexPattern.isRegexPwd;
 
 @Service
 public class UserService {
@@ -53,18 +52,13 @@ public class UserService {
 
     public TokenDTO token(UserDTO.Login user){
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getStudentNum(), user.getPassword());
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
         TokenDTO tokenDto = tokenProvider.generateTokenDto(authentication, authentication.getName());
-        // 4. RefreshToken 저장
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
                 .key(authentication.getName())
                 .value(tokenDto.getRefreshToken())
                 .build();
         refreshTokenRepository.save(refreshToken);
-        // 5. 토큰 발급
         return tokenDto;
     }
 
@@ -75,7 +69,13 @@ public class UserService {
         if(this.userRepository.existsByStudentNum(user.getStudentNum())){
             throw new BaseException(BaseResponseStatus.EXIST_USER_NUM);
         }
+        if(this.userRepository.existsByNickName(user.getNickName())){
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
+        }
         String password = user.getPassword();
+        if(!isRegexPwd(password)){
+            throw new BaseException(BaseResponseStatus.REGEX_PWD);
+        }
         try{
             String encodedPwd = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPwd);
