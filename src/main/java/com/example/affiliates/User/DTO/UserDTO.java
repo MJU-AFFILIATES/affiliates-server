@@ -18,4 +18,12 @@ public class UserDTO {
         private String nickName;
         private String password;
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class NickName{
+        private String nickName;
+    }
 }

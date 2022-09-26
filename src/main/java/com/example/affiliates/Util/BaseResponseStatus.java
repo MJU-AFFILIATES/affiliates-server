@@ -16,6 +16,8 @@ public enum BaseResponseStatus {
     EXIST_NICKNAME(false, 2004, "중복된 닉네임입니다."),
     REGEX_PWD(false, 2005, "비밀번호 양식에 맞게 변경해주세요."),
 
+    DO_NOT_HAVE_NICKNAME(false, 2006, "변경할 닉네임을 입력해주세요."),
+
     /*
      *5000: database error
      */
