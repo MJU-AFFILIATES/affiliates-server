@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Optional;
 
 import static com.example.affiliates.Util.RegexPattern.isRegexPwd;
@@ -117,4 +118,18 @@ public class UserService {
         // 토큰 발급
         return tokenDto;
     }
+
+    public void changeNickName(Principal principal, UserDTO.NickName nickName) throws BaseException{
+        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        if(optional.isPresent()){
+            if(nickName.getNickName().isEmpty()){
+                throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_NICKNAME);
+            }
+            UserEntity user = optional.get();
+            user.changeNickName(nickName.getNickName());
+            userRepository.save(user);
+        }
+
+    }
+
 }

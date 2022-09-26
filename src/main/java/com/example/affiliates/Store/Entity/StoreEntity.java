@@ -1,5 +1,6 @@
 package com.example.affiliates.Store.Entity;
 
+import com.example.affiliates.Util.BaseEntity;
 import com.example.affiliates.Util.CategoryEnum;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "store")
 @NoArgsConstructor
 @DynamicInsert
-public class StoreEntity {
+public class StoreEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeIdx;

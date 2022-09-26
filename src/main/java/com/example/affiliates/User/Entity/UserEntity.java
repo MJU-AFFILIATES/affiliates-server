@@ -50,4 +50,8 @@ public class UserEntity extends BaseEntity {
         this.role = role;
         this.nickName = nickName;
     }
+
+    public void changeNickName(String nickName) {
+        this.nickName = nickName;
+    }
 }
