@@ -85,10 +85,31 @@ public class AuthController {
      * */
 
     @ResponseBody
+    @ApiOperation(value = "학번 중복 체크 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+    })
     @PostMapping("/checkStudent")
     public BaseResponse<Boolean> DuplicateCheckNum(@RequestBody UserDTO.StudentNum studentNum) {
         try {
-            return new BaseResponse<>(userService.DuplicateCheckNum(studentNum));
+            return new BaseResponse<>(userService.duplicateCheckNum(studentNum.getStudentNum()));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /*
+     * 장채은: 닉네임 중복 체크
+     * */
+    @ResponseBody
+    @ApiOperation(value = "닉네임 중복 체크 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+    })
+    @PostMapping("/checkNickName")
+    public BaseResponse<Boolean> DuplicateCheckNickName(@RequestBody UserDTO.NickName nickName) {
+        try {
+            return new BaseResponse<>(userService.duplicateCheckNickName(nickName.getNickName()));
         } catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
