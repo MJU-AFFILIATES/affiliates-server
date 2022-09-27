@@ -121,11 +121,18 @@ public class UserService {
 
     public void changeNickName(Principal principal, UserDTO.NickName nickName) throws BaseException{
         Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        Boolean hasNickName = this.userRepository.existsByNickName(nickName.getNickName());
         if(optional.isPresent()){
             if(nickName.getNickName().isEmpty()){
                 throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_NICKNAME);
             }
             UserEntity user = optional.get();
+            if(nickName.getNickName().equals(user.getNickName())){
+                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+            }
+            if(hasNickName == true){
+                throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
+            }
             user.changeNickName(nickName.getNickName());
             userRepository.save(user);
         }
