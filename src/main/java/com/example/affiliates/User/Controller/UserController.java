@@ -29,6 +29,13 @@ public class UserController {
      * 오수연: 닉네임 변경
      * */
     @ResponseBody
+    @ApiOperation(value = "닉네임 변경 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2004, message = "중복된 닉네임입니다."),
+            @ApiResponse(code = 2006, message = "변경할 닉네임을 입력해주세요."),
+            @ApiResponse(code = 2007, message = "동일한 닉네임으로 변경할 수 없습니다.")
+    })
     @PatchMapping(value = "/changeNickName")
     public BaseResponse<String> changeNickName (Principal principal, @RequestBody UserDTO.NickName nickName){
         try {
