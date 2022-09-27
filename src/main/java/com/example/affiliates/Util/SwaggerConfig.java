@@ -22,7 +22,6 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
-@EnableWebMvc
 public class SwaggerConfig implements WebMvcConfigurer{
 
     @Override

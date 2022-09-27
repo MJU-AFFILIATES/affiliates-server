@@ -67,10 +67,10 @@ public class UserService {
         if(user.getStudentNum() == null || user.getNickName() == null || user.getPassword() == null){
             throw new BaseException(BaseResponseStatus.USER_DONOT_WRITE_INFO);
         }
-        if(this.userRepository.existsByStudentNum(user.getStudentNum())){
+        if(this.duplicateCheckNum(user.getStudentNum())){
             throw new BaseException(BaseResponseStatus.EXIST_USER_NUM);
         }
-        if(this.userRepository.existsByNickName(user.getNickName())){
+        if(this.duplicateCheckNickName(user.getNickName())){
             throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
         }
         String password = user.getPassword();
@@ -132,4 +132,11 @@ public class UserService {
 
     }
 
+    public Boolean duplicateCheckNum(String studentNum) throws BaseException{
+        return this.userRepository.existsByStudentNum(studentNum);
+    }
+
+    public Boolean duplicateCheckNickName(String nickName) throws BaseException{
+        return this.userRepository.existsByNickName(nickName);
+    }
 }
