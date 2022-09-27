@@ -31,4 +31,13 @@ public class UserDTO {
         @ApiModelProperty(value = "닉네임", example = "안녕")
         private String nickName;
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class StudentNum{
+        @ApiModelProperty(value = "학번", example = "60200000")
+        private String studentNum;
+    }
 }

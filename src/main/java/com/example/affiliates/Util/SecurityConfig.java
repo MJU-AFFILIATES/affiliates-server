@@ -58,8 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-                .antMatchers("/users/login").permitAll()
-                .antMatchers("/users/sign-in").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers("/api/v1/auth/**","/",
                         "/v2/api-docs", "/swagger-resources/**", "/swagger-ui/index.html", "/swagger-ui.html","/webjars/**", "/swagger/**",   // swagger
                         "/h2-console/**",

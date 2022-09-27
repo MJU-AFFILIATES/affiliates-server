@@ -132,4 +132,7 @@ public class UserService {
 
     }
 
+    public Boolean DuplicateCheckNum(UserDTO.StudentNum studentNum) throws BaseException{
+        return this.userRepository.existsByStudentNum(studentNum.getStudentNum());
+    }
 }
