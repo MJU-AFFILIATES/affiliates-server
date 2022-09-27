@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
-
+    StoreEntity findByStoreIdx(Long storeIdx);
 }

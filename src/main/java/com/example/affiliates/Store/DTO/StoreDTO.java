@@ -10,10 +10,12 @@ import lombok.Setter;
 public class StoreDTO {
 
     @NoArgsConstructor
-//    @AllArgsConstructor
+    @AllArgsConstructor
     @Getter
     @Setter
-    public static class Store{
-
+    public static class GetStoreReview{
+        private Long storeIdx;
+        private String review;
+        private int star;
     }
 }

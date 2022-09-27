@@ -52,7 +52,7 @@ public class AuthController {
     @ApiOperation(value = "회원가입 API")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
-            @ApiResponse(code = 2000, message = "이미 있는 사용자 학번입니다.."),
+            @ApiResponse(code = 2000, message = "이미 있는 사용자 학번입니다."),
             @ApiResponse(code = 2002, message = "정보를 작성하지 않았습니다."),
             @ApiResponse(code = 2003, message = "이미 등록된 학번 입니다."),
             @ApiResponse(code = 4001, message = "비밀번호 암호화에 실패했습니다."),

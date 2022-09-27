@@ -19,6 +19,9 @@ public enum BaseResponseStatus {
     DO_NOT_HAVE_NICKNAME(false, 2006, "변경할 닉네임을 입력해주세요."),
     SAME_NICKNAME(false, 2007, "동일한 닉네임으로 변경할 수 없습니다."),
 
+    REVIEW_STOREID_EMPTY(false, 2008, "storeIdx가 공백입니다."),
+    REVIEW_STAR_EMPTY(false, 2009, "별점을 입력해주세요."),
+
     /*
      *5000: database error
      */
