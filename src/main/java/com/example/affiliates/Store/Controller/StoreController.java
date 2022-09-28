@@ -48,6 +48,12 @@ public class StoreController{
     * 장채은: 위도 경도 api
     * */
     @ResponseBody
+    @ApiOperation(value = "위도 경도 api")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2010, message = "kakao 지도 api를 불러올 수 없거나, 주소가 잘못되어 있습니다."),
+            @ApiResponse(code = 2011, message = "헤더에 정보 값이 없습니다.")
+    })
     @GetMapping("/address")
     public BaseResponse<StoreDTO.Location> address(@RequestParam String address){
         try {
@@ -61,6 +67,11 @@ public class StoreController{
      * 장채은: 카테고리 별 상점 리스트
      * */
     @ResponseBody
+    @ApiOperation(value = "카테고리 별 상점 리스트 api")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2012, message = "카테고리 값이 null이거나, 있는 카테고리 값이 아닙니다."),
+    })
     @GetMapping("/storeList/{category}")
     public BaseResponse<List<StoreDTO.StoreList>> storeList(@PathVariable("category") int category){
         try {

@@ -71,7 +71,7 @@ public class StoreService {
         String query = roadFullAddr;
         HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
         if(requestEntity.equals(null)){
-            throw new BaseException(BaseResponseStatus.NULL_RESPONSE_ENTITY);
+            throw new BaseException(BaseResponseStatus.NULL_HEADER);
         }
 
         String url = apiUrl + "?query="  + query;
