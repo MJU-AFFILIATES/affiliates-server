@@ -21,7 +21,9 @@ public enum BaseResponseStatus {
 
     REVIEW_STOREID_EMPTY(false, 2008, "storeIdx가 공백입니다."),
     REVIEW_STAR_EMPTY(false, 2009, "별점을 입력해주세요."),
-
+    NULL_RESPONSE_ENTITY(false, 2010, "kakao 지도 api를 불러올 수 없거나, 주소가 잘못되어 있습니다."),
+    NULL_HEADER(false, 2011, "헤더에 정보 값이 없습니다."),
+    CAN_NOT_ACCESS_STORE_FROM_CATEGORY(false, 2012, "카테고리 값이 null이거나, 있는 카테고리 값이 아닙니다."),
     /*
      *5000: database error
      */
