@@ -68,12 +68,15 @@ public class StoreService {
         String body = "";
         String query = roadFullAddr;
         HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-
+        if(requestEntity.equals(null)){
+            throw new BaseException(BaseResponseStatus.NULL_RESPONSE_ENTITY);
+        }
 
         String url = apiUrl + "?query="  + query;
         ResponseEntity<String> responseEntity = rest.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        String response = responseEntity.getBody();
-
+        if(responseEntity.equals(null)){
+            throw new BaseException(BaseResponseStatus.NULL_RESPONSE_ENTITY);
+        }
         JSONObject rjson = new JSONObject(responseEntity.getBody());
         JSONObject documents = (JSONObject) rjson.getJSONArray("documents").get(0);
         JSONObject address = documents.getJSONObject("address");
