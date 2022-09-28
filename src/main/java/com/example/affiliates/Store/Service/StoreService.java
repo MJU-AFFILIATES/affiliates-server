@@ -100,7 +100,7 @@ public class StoreService {
         }else if(category == 4) {
             store = this.storeRepository.findByCategoryEnum(CategoryEnum.ACTIVITY);
         }else if (store.equals(null) || category>4) {
-            // exception 처리
+           throw new BaseException(BaseResponseStatus.CAN_NOT_ACCESS_STORE_FROM_CATEGORY);
         }
         List<StoreDTO.StoreList> list = new ArrayList<>();
         for(StoreEntity storeEntity: store){
