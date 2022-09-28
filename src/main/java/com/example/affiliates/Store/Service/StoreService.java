@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,12 +43,12 @@ public class StoreService {
         this.apiKey = apiKey;
     }
 
-    public void storeReview(Principal principal, StoreDTO.GetStoreReview storeReview) throws BaseException{
+    public void storeReview(Principal principal, StoreDTO.StoreReview storeReview) throws BaseException{
         Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
         if(storeReview.getStoreIdx() == null){
             throw new BaseException(BaseResponseStatus.REVIEW_STOREID_EMPTY);
         }
-        if(storeReview.getStar()<=1 || storeReview.getStar()>=5){
+        if(storeReview.getStar()<1 || storeReview.getStar()>5){
             throw new BaseException(BaseResponseStatus.REVIEW_STAR_EMPTY);
         }
         StoreEntity store = this.storeRepository.findByStoreIdx(storeReview.getStoreIdx());
@@ -81,4 +82,25 @@ public class StoreService {
 
         return new StoreDTO.Location(address.getString("x"), address.getString("y"));
     }
+
+    public List<StoreDTO.ReviewList> getReviewList(Long storeIdx) throws BaseException{
+
+        StoreEntity storeEntity = storeRepository.findByStoreIdx(storeIdx);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(storeEntity);
+        List<StoreDTO.ReviewList> reviewList = new ArrayList<>();
+
+        for(ReviewEntity i : reviewEntity){
+            StoreDTO.ReviewList review = new StoreDTO.ReviewList();
+            review.setReviewIdx(i.getReviewIdx());
+            review.setStoreIdx(storeIdx);
+            review.setName(storeEntity.getName());
+            review.setUserIdx(i.getUserIdx().getUserIdx());
+            review.setNickName(i.getUserIdx().getNickName());
+            review.setReview(i.getReview());
+            review.setStar(i.getStar());
+            reviewList.add(review);
+        }
+        return reviewList;
+    }
+
 }

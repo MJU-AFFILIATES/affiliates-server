@@ -35,7 +35,7 @@ public class StoreController{
             @ApiResponse(code = 2009, message = "별점을 입력해주세요.")
     })
     @PostMapping("/review")
-    public BaseResponse<String> storeReview(Principal principal, @RequestBody StoreDTO.GetStoreReview store){
+    public BaseResponse<String> storeReview(Principal principal, @RequestBody StoreDTO.StoreReview store){
         try {
             storeService.storeReview(principal, store);
             return new BaseResponse<>("리뷰 작성을 완료했습니다.");
@@ -53,5 +53,21 @@ public class StoreController{
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @ResponseBody
+    @ApiOperation(value = "가게별 리뷰 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다.")
+    })
+    @GetMapping("/review/{storeIdx}")
+    public BaseResponse<List<StoreDTO.ReviewList>> getReview(@PathVariable("storeIdx") Long storeIdx){
+        try{
+            List<StoreDTO.ReviewList> getReviewList = storeService.getReviewList(storeIdx);
+            return new BaseResponse<>(getReviewList);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
 
