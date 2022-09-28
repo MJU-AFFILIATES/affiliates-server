@@ -43,5 +43,15 @@ public class StoreController{
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @ResponseBody
+    @PostMapping("/address")
+    public BaseResponse<StoreDTO.Location> address(@RequestParam String address){
+        try {
+            return new BaseResponse<>(storeService.getKakaoApiFromAddress(address));
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 }
 
