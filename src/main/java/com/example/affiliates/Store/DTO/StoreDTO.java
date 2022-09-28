@@ -1,5 +1,6 @@
 package com.example.affiliates.Store.DTO;
 
+import com.example.affiliates.Util.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,20 @@ public class StoreDTO {
     @Getter
     @Setter
     public static class Location{
+        private String x;
+        private String y;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class StoreList{
+        private Long storeIdx;
+        private String name;
+        private String contents;
+        private CategoryEnum category;
+        private String address;
         private String x;
         private String y;
     }
