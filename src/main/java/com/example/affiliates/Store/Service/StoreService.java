@@ -70,13 +70,13 @@ public class StoreService {
         String body = "";
         String query = roadFullAddr;
         HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-        if(requestEntity.equals(null)){
+        if(requestEntity == null){
             throw new BaseException(BaseResponseStatus.NULL_HEADER);
         }
 
         String url = apiUrl + "?query="  + query;
         ResponseEntity<String> responseEntity = rest.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        if(responseEntity.equals(null)){
+        if(responseEntity == null){
             throw new BaseException(BaseResponseStatus.NULL_RESPONSE_ENTITY);
         }
         JSONObject rjson = new JSONObject(responseEntity.getBody());
@@ -99,7 +99,7 @@ public class StoreService {
             store = this.storeRepository.findByCategoryEnum(CategoryEnum.RESTAURANT);
         }else if(category == 4) {
             store = this.storeRepository.findByCategoryEnum(CategoryEnum.ACTIVITY);
-        }else if (store.equals(null) || category>4) {
+        }else if (store == null || category>4) {
            throw new BaseException(BaseResponseStatus.CAN_NOT_ACCESS_STORE_FROM_CATEGORY);
         }
         List<StoreDTO.StoreList> list = new ArrayList<>();
