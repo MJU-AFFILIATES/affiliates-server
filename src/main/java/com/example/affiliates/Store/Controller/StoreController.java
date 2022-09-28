@@ -44,8 +44,11 @@ public class StoreController{
         }
     }
 
+    /*
+    * 장채은: 위도 경도 api
+    * */
     @ResponseBody
-    @PostMapping("/address")
+    @GetMapping("/address")
     public BaseResponse<StoreDTO.Location> address(@RequestParam String address){
         try {
             return new BaseResponse<>(storeService.getKakaoApiFromAddress(address));
@@ -53,5 +56,19 @@ public class StoreController{
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /*
+     * 장채은: 카테고리 별 상점 리스트
+     * */
+    @ResponseBody
+    @GetMapping("/storeList/{category}")
+    public BaseResponse<List<StoreDTO.StoreList>> storeList(@PathVariable("category") int category){
+        try {
+            return new BaseResponse<>(storeService.storeList(category));
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 }
 
