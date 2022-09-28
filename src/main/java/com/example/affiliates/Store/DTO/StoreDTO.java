@@ -15,7 +15,7 @@ public class StoreDTO {
     @AllArgsConstructor
     @Getter
     @Setter
-    public static class GetStoreReview{
+    public static class StoreReview{
         private Long storeIdx;
         private String review;
         private int star;
@@ -29,6 +29,21 @@ public class StoreDTO {
         private String x;
         private String y;
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class ReviewList{
+        private Long reviewIdx;
+        private Long storeIdx;
+        private String name;
+        private Long userIdx;
+        private String nickName;
+        private String review;
+        private int star;
+    }
+
 
     @NoArgsConstructor
     @AllArgsConstructor
