@@ -51,6 +51,12 @@ public class UserController {
     * 장채은 : 로그아웃
     * */
     @ResponseBody
+    @ApiOperation(value = "로그아웃 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 9504, message = "JWT의 값이 없습니다."),
+            @ApiResponse(code = 2014, message = "REFRESH TOKEN 값이 없습니다.")
+    })
     @GetMapping("/logout")
     public BaseResponse<String> logout(Principal principal, HttpServletRequest request){
         try{
