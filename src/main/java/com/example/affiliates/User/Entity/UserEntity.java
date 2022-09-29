@@ -54,4 +54,5 @@ public class UserEntity extends BaseEntity {
     public void changeNickName(String nickName) {
         this.nickName = nickName;
     }
+    public void changeLoginStatus(LoginStatus loginStatus){this.loginStatus = loginStatus;};
 }

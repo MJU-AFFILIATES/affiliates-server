@@ -25,6 +25,7 @@ public enum BaseResponseStatus {
     NULL_HEADER(false, 2011, "헤더에 정보 값이 없습니다."),
     CAN_NOT_ACCESS_STORE_FROM_CATEGORY(false, 2012, "카테고리 값이 null이거나, 있는 카테고리 값이 아닙니다."),
     NULL_PATH(false, 2013, "PathVariable을 입력해주세요."),
+    DO_NOT_HAVE_REFRESH(false, 2014, "REFRESH TOKEN 값이 없습니다."),
     /*
      *5000: database error
      */
