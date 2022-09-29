@@ -38,6 +38,7 @@ public class StoreDTO {
         private Long reviewIdx;
         private Long storeIdx;
         private String name;
+        private double AvgStar;
         private Long userIdx;
         private String nickName;
         private String review;
