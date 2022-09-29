@@ -10,21 +10,12 @@ import com.example.affiliates.User.Repository.UserRepository;
 import com.example.affiliates.Util.BaseException;
 import com.example.affiliates.Util.BaseResponseStatus;
 import com.example.affiliates.Util.CategoryEnum;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,29 +78,55 @@ public class StoreService {
         return new StoreDTO.Location(address.getString("x"), address.getString("y"));
     }
 
+    public List<StoreDTO.UserReviewList> getUserReviewList(Principal principal) throws BaseException{
+        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        List<ReviewEntity> reviewEntity = reviewRepository.findByUserIdxOrderByCreatedDate(optional.get());
+        List<StoreDTO.UserReviewList> reviewList = new ArrayList<>();
+
+        for(ReviewEntity i : reviewEntity){
+            StoreDTO.UserReviewList review = new StoreDTO.UserReviewList();
+            review.setStoreIdx(i.getStoreIdx().getStoreIdx());
+            review.setName(i.getStoreIdx().getName());
+            review.setCategory(i.getStoreIdx().getCategoryEnum());
+            review.setNickName(optional.get().getNickName());
+            review.setReview(i.getReview());
+            review.setStar(i.getStar());
+            review.setCreatedDate(i.getCreatedDate());
+            reviewList.add(review);
+        }
+        return reviewList;
+    }
+
+
     public List<StoreDTO.ReviewList> getReviewList(Long storeIdx) throws BaseException{
 
         StoreEntity storeEntity = storeRepository.findByStoreIdx(storeIdx);
         List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(storeEntity);
         List<StoreDTO.ReviewList> reviewList = new ArrayList<>();
 
+        if(storeIdx == null){
+            throw new BaseException(BaseResponseStatus.NULL_PATH);
+        }
+
         double avg = 0;
         double sum = 0;
         for(int i=0; i<reviewEntity.size(); i++){
             sum += (double)reviewEntity.get(i).getStar();
-            avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
         }
+        avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
 
         for(ReviewEntity i : reviewEntity){
             StoreDTO.ReviewList review = new StoreDTO.ReviewList();
             review.setReviewIdx(i.getReviewIdx());
             review.setStoreIdx(storeIdx);
             review.setName(storeEntity.getName());
+            review.setCategory(storeEntity.getCategoryEnum());
             review.setAvgStar(avg);
             review.setUserIdx(i.getUserIdx().getUserIdx());
             review.setNickName(i.getUserIdx().getNickName());
             review.setReview(i.getReview());
             review.setStar(i.getStar());
+            review.setCreatedDate(i.getCreatedDate());
             reviewList.add(review);
         }
         return reviewList;
