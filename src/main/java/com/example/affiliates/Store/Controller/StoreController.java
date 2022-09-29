@@ -87,13 +87,32 @@ public class StoreController{
     @ResponseBody
     @ApiOperation(value = "가게별 리뷰 API")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "요청에 성공하였습니다.")
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2012, message = "PathVariable을 입력해주세요.")
     })
     @GetMapping("/review/{storeIdx}")
     public BaseResponse<List<StoreDTO.ReviewList>> getReview(@PathVariable("storeIdx") Long storeIdx){
         try{
             List<StoreDTO.ReviewList> getReviewList = storeService.getReviewList(storeIdx);
             return new BaseResponse<>(getReviewList);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /*
+     * 오수연: 내가 쓴 리뷰 리스트
+     * */
+    @ResponseBody
+    @ApiOperation(value = "내가 쓴 리뷰 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다.")
+    })
+    @GetMapping("/review/user")
+    public BaseResponse<List<StoreDTO.UserReviewList>> getUserReview(Principal principal){
+        try{
+            List<StoreDTO.UserReviewList> getUserReviewList = storeService.getUserReviewList(principal);
+            return new BaseResponse<>(getUserReviewList);
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }

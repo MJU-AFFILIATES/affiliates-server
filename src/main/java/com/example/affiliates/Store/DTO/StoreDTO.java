@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.json.JSONObject;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class StoreDTO {
@@ -38,11 +40,27 @@ public class StoreDTO {
         private Long reviewIdx;
         private Long storeIdx;
         private String name;
+        private CategoryEnum category;
         private double AvgStar;
         private Long userIdx;
         private String nickName;
         private String review;
         private int star;
+        private LocalDateTime createdDate;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class UserReviewList{
+        private Long storeIdx;
+        private String name;
+        private CategoryEnum category;
+        private String nickName;
+        private String review;
+        private int star;
+        private LocalDateTime createdDate;
     }
 
 
