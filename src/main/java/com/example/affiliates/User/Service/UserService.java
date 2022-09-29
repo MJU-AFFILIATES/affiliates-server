@@ -8,6 +8,7 @@ import com.example.affiliates.jwt.DTO.TokenDTO;
 import com.example.affiliates.jwt.TokenProvider;
 import com.example.affiliates.jwt.entity.RefreshTokenEntity;
 import com.example.affiliates.jwt.repository.RefreshTokenRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.affiliates.Util.RegexPattern.isRegexPwd;
 
@@ -27,14 +29,17 @@ public class UserService {
     private TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
+    private RedisTemplate redisTemplate;
 
     public UserService(UserRepository userRepository, TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository,
-                       PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder){
+                       PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder,
+                       RedisTemplate redisTemplate){
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.redisTemplate = redisTemplate;
     }
 
     public TokenDTO login(UserDTO.Login user) throws BaseException{
@@ -145,5 +150,22 @@ public class UserService {
 
     public Boolean duplicateCheckNickName(String nickName) throws BaseException{
         return this.userRepository.existsByNickName(nickName);
+    }
+
+    public void logout(Principal principal, HttpServletRequest request) throws BaseException{
+        UserEntity user = this.userRepository.findByStudentNum(principal.getName())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NULL_JWT));
+        String accessToken = request.getHeader("Authorization").substring(7);
+
+        Long expiration = tokenProvider.getExpiration(accessToken);
+        redisTemplate.opsForValue()
+                .set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+        user.changeLoginStatus(LoginStatus.LOG_OUT);
+        this.userRepository.save(user);
+
+        RefreshTokenEntity byKeyId = this.refreshTokenRepository.findByKeyId(user.getStudentNum())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH));
+        this.refreshTokenRepository.delete(byKeyId);
     }
 }
