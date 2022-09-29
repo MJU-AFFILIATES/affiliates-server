@@ -93,11 +93,19 @@ public class StoreService {
         List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(storeEntity);
         List<StoreDTO.ReviewList> reviewList = new ArrayList<>();
 
+        double avg = 0;
+        double sum = 0;
+        for(int i=0; i<reviewEntity.size(); i++){
+            sum += (double)reviewEntity.get(i).getStar();
+            avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
+        }
+
         for(ReviewEntity i : reviewEntity){
             StoreDTO.ReviewList review = new StoreDTO.ReviewList();
             review.setReviewIdx(i.getReviewIdx());
             review.setStoreIdx(storeIdx);
             review.setName(storeEntity.getName());
+            review.setAvgStar(avg);
             review.setUserIdx(i.getUserIdx().getUserIdx());
             review.setNickName(i.getUserIdx().getNickName());
             review.setReview(i.getReview());
