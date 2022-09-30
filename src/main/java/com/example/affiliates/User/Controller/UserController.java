@@ -51,11 +51,39 @@ public class UserController {
     * 장채은 : 로그아웃
     * */
     @ResponseBody
+    @ApiOperation(value = "로그아웃 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 2014, message = "REFRESH TOKEN 값이 없습니다."),
+            @ApiResponse(code = 9504, message = "JWT의 값이 없습니다.")
+    })
     @GetMapping("/logout")
     public BaseResponse<String> logout(Principal principal, HttpServletRequest request){
         try{
             userService.logout(principal, request);
             return new BaseResponse<>("로그아웃 되었습니다.");
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /*
+     * 오수연 : 회원탈퇴
+     * */
+    @ResponseBody
+    @ApiOperation(value = "회원탈퇴 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 8001, message = "회원과 관련된 review를 삭제하는 도중 에러가 발생했습니다."),
+            @ApiResponse(code = 2014, message = "REFRESH TOKEN 값이 없습니다."),
+            @ApiResponse(code = 8003, message = "회원 정보를 삭제하는 도중 에러가 발생했습니다."),
+            @ApiResponse(code = 9504, message = "JWT의 값이 없습니다.")
+    })
+    @DeleteMapping("/withdrawl")
+    public BaseResponse<String> deleteUser(Principal principal, HttpServletRequest request){
+        try{
+            userService.deleteUserData(principal, request);
+            return new BaseResponse<>("유저에 대한 정보를 모두 삭제했습니다.");
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

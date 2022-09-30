@@ -10,4 +10,5 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     List<ReviewEntity> findByStoreIdxOrderByCreatedDate(StoreEntity storeEntity);
     List<ReviewEntity> findByUserIdxOrderByCreatedDate(UserEntity userEntity);
+    List<ReviewEntity> findAllByUserIdx(UserEntity userEntity);
 }

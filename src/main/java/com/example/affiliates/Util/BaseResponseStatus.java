@@ -31,6 +31,12 @@ public enum BaseResponseStatus {
      */
     PASSWORD_ENCRYPTION_ERROR(false, 4001, "비밀번호 암호화에 실패했습니다."),
 
+    /*
+     * 8000 : delete
+     */
+    DELETE_REVIEW_ERROR(false, 8001, "회원과 관련된 review를 삭제하는 도중 에러가 발생했습니다."),
+    DELETE_USER_ERROR(false, 8003, "회원 정보를 삭제하는 도중 에러가 발생했습니다."),
+
 
     /*
      * 9500 : jwt

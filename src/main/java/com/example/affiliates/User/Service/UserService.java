@@ -1,5 +1,7 @@
 package com.example.affiliates.User.Service;
 
+import com.example.affiliates.Store.Entity.ReviewEntity;
+import com.example.affiliates.Store.Repository.ReviewRepository;
 import com.example.affiliates.User.DTO.UserDTO;
 import com.example.affiliates.User.Entity.UserEntity;
 import com.example.affiliates.User.Repository.UserRepository;
@@ -16,7 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -25,16 +29,18 @@ import static com.example.affiliates.Util.RegexPattern.isRegexPwd;
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private ReviewRepository reviewRepository;
     private RefreshTokenRepository refreshTokenRepository;
     private TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
     private RedisTemplate redisTemplate;
 
-    public UserService(UserRepository userRepository, TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository,
+    public UserService(UserRepository userRepository, ReviewRepository reviewRepository, TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository,
                        PasswordEncoder passwordEncoder, AuthenticationManagerBuilder authenticationManagerBuilder,
                        RedisTemplate redisTemplate){
         this.userRepository = userRepository;
+        this.reviewRepository = reviewRepository;
         this.tokenProvider = tokenProvider;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
@@ -167,5 +173,43 @@ public class UserService {
         RefreshTokenEntity byKeyId = this.refreshTokenRepository.findByKeyId(user.getStudentNum())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH));
         this.refreshTokenRepository.delete(byKeyId);
+    }
+
+    public void deleteUserData(Principal principal, HttpServletRequest request) throws BaseException{
+        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        if(optional.isPresent()){
+            String accessToken = request.getHeader("Authorization").substring(7);
+            Long expiration = tokenProvider.getExpiration(accessToken);
+            redisTemplate.opsForValue()
+                    .set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+            UserEntity userEntity = optional.get();
+            String studNum = userEntity.getStudentNum();
+
+            try{
+                List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserIdx(userEntity);
+                for(ReviewEntity i : reviewEntityList){
+                    userEntity.getReviews().remove(i);
+                    reviewRepository.delete(i);
+                }
+            }catch (Exception e){
+                throw new BaseException(BaseResponseStatus.DELETE_REVIEW_ERROR);
+            }
+            try{
+                Optional<RefreshTokenEntity> op = refreshTokenRepository.findByKeyId(studNum);
+                RefreshTokenEntity refreshTokenEntity = op.get();
+                refreshTokenRepository.delete(refreshTokenEntity);
+            }catch (Exception e){
+                throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH);
+            }
+
+            try{
+                userRepository.deleteById(userEntity.getUserIdx());
+            }catch (Exception e){
+                throw new BaseException(BaseResponseStatus.DELETE_USER_ERROR);
+            }
+        } else{
+            throw new BaseException(BaseResponseStatus.NULL_JWT);
+        }
+
     }
 }

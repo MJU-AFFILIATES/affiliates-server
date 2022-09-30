@@ -1,5 +1,6 @@
 package com.example.affiliates.User.Entity;
 
+import com.example.affiliates.Store.Entity.ReviewEntity;
 import com.example.affiliates.Util.BaseEntity;
 import com.example.affiliates.Util.LoginStatus;
 import com.example.affiliates.Util.Role;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,6 +42,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userIdx", orphanRemoval = true)
+    private List<ReviewEntity> reviews = new ArrayList<>();
 
     @Builder
     public UserEntity(String studentNum, String password, LoginStatus loginStatus, String status, Role role,
