@@ -50,16 +50,12 @@ public class UserService {
 
     public TokenDTO login(UserDTO.Login user) throws BaseException{
         // user가 가입 되어 있는지 확인(ID가 맞는지도 확인)
-        Optional<UserEntity> opUser = this.userRepository.findByStudentNum(user.getStudentNum());
-        if(!opUser.isEmpty()){
-            // PASSWORD 맞는지 확인
-            if(!passwordEncoder.matches(user.getPassword(), opUser.get().getPassword())) { // 그냥 받아온 password를 넣으면 알아서 암호화해서 비교함.
-                throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
-            }
-            return token(user);
-        }else{
+        UserEntity opUser = this.checkHasUser(user.getStudentNum(), BaseResponseStatus.USER_POST_NOT_SIGN_IN);
+        // PASSWORD 맞는지 확인
+        if(!passwordEncoder.matches(user.getPassword(), opUser.getPassword())) { // 그냥 받아온 password를 넣으면 알아서 암호화해서 비교함.
             throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
         }
+        return token(user);
     }
 
     public TokenDTO token(UserDTO.Login user){
@@ -131,22 +127,19 @@ public class UserService {
     }
 
     public void changeNickName(Principal principal, UserDTO.NickName nickName) throws BaseException{
-        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        UserEntity user = this.checkHasUser(principal.getName(), BaseResponseStatus.USER_POST_NOT_SIGN_IN);
         Boolean hasNickName = this.userRepository.existsByNickName(nickName.getNickName());
-        if(optional.isPresent()){
-            if(nickName.getNickName().isEmpty()){
-                throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_NICKNAME);
-            }
-            UserEntity user = optional.get();
-            if(nickName.getNickName().equals(user.getNickName())){
-                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
-            }
-            if(hasNickName == true){
-                throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
-            }
-            user.changeNickName(nickName.getNickName());
-            userRepository.save(user);
+        if(nickName.getNickName().isEmpty()){
+            throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_NICKNAME);
         }
+        if(nickName.getNickName().equals(user.getNickName())){
+            throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+        }
+        if(hasNickName == true){
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
+        }
+        user.changeNickName(nickName.getNickName());
+        userRepository.save(user);
 
     }
 
@@ -158,9 +151,13 @@ public class UserService {
         return this.userRepository.existsByNickName(nickName);
     }
 
+    public UserEntity checkHasUser(String studentNum, BaseResponseStatus status) throws BaseException {
+        return this.userRepository.findByStudentNum(studentNum)
+                .orElseThrow(() -> new BaseException(status));
+    }
+
     public void logout(Principal principal, HttpServletRequest request) throws BaseException{
-        UserEntity user = this.userRepository.findByStudentNum(principal.getName())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NULL_JWT));
+        UserEntity user = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_JWT);
         String accessToken = request.getHeader("Authorization").substring(7);
 
         Long expiration = tokenProvider.getExpiration(accessToken);
@@ -176,40 +173,33 @@ public class UserService {
     }
 
     public void deleteUserData(Principal principal, HttpServletRequest request) throws BaseException{
-        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
-        if(optional.isPresent()){
-            String accessToken = request.getHeader("Authorization").substring(7);
-            Long expiration = tokenProvider.getExpiration(accessToken);
-            redisTemplate.opsForValue()
-                    .set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
-            UserEntity userEntity = optional.get();
-            String studNum = userEntity.getStudentNum();
-
-            try{
-                List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserIdx(userEntity);
-                for(ReviewEntity i : reviewEntityList){
-                    userEntity.getReviews().remove(i);
-                    reviewRepository.delete(i);
-                }
-            }catch (Exception e){
-                throw new BaseException(BaseResponseStatus.DELETE_REVIEW_ERROR);
+        UserEntity userEntity = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_JWT);
+        String accessToken = request.getHeader("Authorization").substring(7);
+        Long expiration = tokenProvider.getExpiration(accessToken);
+        redisTemplate.opsForValue()
+                .set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+        String studNum = userEntity.getStudentNum();
+        try{
+            List<ReviewEntity> reviewEntityList = reviewRepository.findAllByUserIdx(userEntity);
+            for(ReviewEntity i : reviewEntityList){
+                userEntity.getReviews().remove(i);
+                reviewRepository.delete(i);
             }
-            try{
-                Optional<RefreshTokenEntity> op = refreshTokenRepository.findByKeyId(studNum);
-                RefreshTokenEntity refreshTokenEntity = op.get();
-                refreshTokenRepository.delete(refreshTokenEntity);
-            }catch (Exception e){
-                throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH);
-            }
-
-            try{
-                userRepository.deleteById(userEntity.getUserIdx());
-            }catch (Exception e){
-                throw new BaseException(BaseResponseStatus.DELETE_USER_ERROR);
-            }
-        } else{
-            throw new BaseException(BaseResponseStatus.NULL_JWT);
+        }catch (Exception e){
+            throw new BaseException(BaseResponseStatus.DELETE_REVIEW_ERROR);
+        }
+        try{
+            Optional<RefreshTokenEntity> op = refreshTokenRepository.findByKeyId(studNum);
+            RefreshTokenEntity refreshTokenEntity = op.get();
+            refreshTokenRepository.delete(refreshTokenEntity);
+        }catch (Exception e){
+            throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH);
         }
 
+        try{
+            userRepository.deleteById(userEntity.getUserIdx());
+        }catch (Exception e){
+            throw new BaseException(BaseResponseStatus.DELETE_USER_ERROR);
+        }
     }
 }
