@@ -88,20 +88,6 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
-
-
-    /*
-     * 토큰 재발급
-     * */
-    @ResponseBody
-    @PostMapping("/reissue")
-    public BaseResponse<TokenDTO> reissue(@RequestBody TokenDTO tokenRequestDto, HttpServletRequest request) {
-        try {
-            return new BaseResponse<TokenDTO>(userService.reissue(tokenRequestDto, request));
-        } catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
-    }
 }
 
 
