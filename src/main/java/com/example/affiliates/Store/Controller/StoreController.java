@@ -81,6 +81,7 @@ public class StoreController{
         }
     }
 
+
     /*
      * 오수연: 상점 별 리뷰 리스트
      * */
@@ -113,6 +114,23 @@ public class StoreController{
         try{
             List<StoreDTO.UserReviewList> getUserReviewList = storeService.getUserReviewList(principal);
             return new BaseResponse<>(getUserReviewList);
+        }catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /*
+     * 오수연: 가게 하나 조회
+     * */
+    @ResponseBody
+    @ApiOperation(value = "가게 하나 조회 API")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다.")
+    })
+    @GetMapping("/getStore/{storeIdx}")
+    public BaseResponse<List<StoreDTO.Store>> getStore(@PathVariable("storeIdx") Long storeIdx){
+        try{
+            return new BaseResponse<>(storeService.getStore(storeIdx));
         }catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
         }
