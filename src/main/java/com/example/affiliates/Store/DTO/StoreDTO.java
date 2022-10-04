@@ -58,10 +58,10 @@ public class StoreDTO {
         private Long storeIdx;
         private String name;
         private CategoryEnum category;
+        private String imgUrl;
         private String nickName;
         private String review;
         private int star;
-        private String imgUrl;
         private LocalDateTime createdDate;
     }
 
@@ -75,6 +75,21 @@ public class StoreDTO {
         private String name;
         private String contents;
         private CategoryEnum category;
+        private String address;
+        private String x;
+        private String y;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class Store{
+        private Long storeIdx;
+        private String name;
+        private String contents;
+        private CategoryEnum category;
+        private String imgUrl;
         private String address;
         private String x;
         private String y;

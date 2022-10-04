@@ -88,6 +88,7 @@ public class StoreService {
             review.setStoreIdx(i.getStoreIdx().getStoreIdx());
             review.setName(i.getStoreIdx().getName());
             review.setCategory(i.getStoreIdx().getCategoryEnum());
+            review.setImgUrl(i.getStoreIdx().getImgUrl());
             review.setNickName(optional.get().getNickName());
             review.setReview(i.getReview());
             review.setStar(i.getStar());
@@ -162,6 +163,25 @@ public class StoreService {
             storeList.setY(location.getY());
             list.add(storeList);
         }
+        return list;
+    }
+
+    public List<StoreDTO.Store> getStore(Long storeIdx) throws BaseException{
+        StoreEntity store = storeRepository.findByStoreIdx(storeIdx);
+
+        List<StoreDTO.Store> list = new ArrayList<>();
+        StoreDTO.Store storeList = new StoreDTO.Store();
+        storeList.setStoreIdx(storeIdx);
+        storeList.setName(store.getName());
+        storeList.setCategory(store.getCategoryEnum());
+        storeList.setAddress(store.getAddress());
+        storeList.setContents(store.getContents());
+        storeList.setImgUrl(store.getImgUrl());
+        StoreDTO.Location location = this.getKakaoApiFromAddress(store.getAddress());
+        storeList.setX(location.getX());
+        storeList.setY(location.getY());
+        list.add(storeList);
+
         return list;
     }
 }
