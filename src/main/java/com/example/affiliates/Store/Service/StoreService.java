@@ -126,6 +126,8 @@ public class StoreService {
             review.setNickName(i.getUserIdx().getNickName());
             review.setReview(i.getReview());
             review.setStar(i.getStar());
+            review.setImgUrl(i.getStoreIdx().getImgUrl());
+            review.setImgUrl(i.getStoreIdx().getImgUrl());
             review.setCreatedDate(i.getCreatedDate());
             reviewList.add(review);
         }

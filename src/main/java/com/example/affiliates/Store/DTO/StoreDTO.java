@@ -45,6 +45,7 @@ public class StoreDTO {
         private Long userIdx;
         private String nickName;
         private String review;
+        private String imgUrl;
         private int star;
         private LocalDateTime createdDate;
     }
@@ -60,6 +61,7 @@ public class StoreDTO {
         private String nickName;
         private String review;
         private int star;
+        private String imgUrl;
         private LocalDateTime createdDate;
     }
 

@@ -32,17 +32,21 @@ public class StoreEntity extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String contents;
 
+    @Column(length = 500)
+    private String imgUrl;
+
     @Column(nullable = false, columnDefinition = "varchar(10) default 'active'")
     private String status;
 
     @Builder
     public StoreEntity(String name, CategoryEnum categoryEnum,
-                       String address, String contents, String status){
+                       String address, String contents, String status, String imgUrl){
         this.name = name;
         this.categoryEnum = categoryEnum;
         this.address = address;
         this.contents = contents;
         this.status = status;
+        this.imgUrl = imgUrl;
     }
 
 }
