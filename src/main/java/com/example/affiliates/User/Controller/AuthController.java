@@ -71,6 +71,12 @@ public class AuthController {
     /*
      * 장채은: 토큰 재발급
      * */
+    @ResponseBody
+    @ApiOperation(value = "토큰 재발급 api")
+    @ApiResponses(value = {
+            @ApiResponse(code = 2015, message = "로그아웃 된 사용자입니다."),
+            @ApiResponse(code = 2016, message = "User 정보가 일치하지 않습니다.")
+    })
     @PostMapping("/reissue")
     public BaseResponse<TokenDTO> reissue(@RequestBody TokenDTO tokenRequestDto, HttpServletRequest request) {
         try {

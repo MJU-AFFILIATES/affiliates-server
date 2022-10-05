@@ -49,10 +49,8 @@ public class UserService {
     }
 
     public TokenDTO login(UserDTO.Login user) throws BaseException{
-        // user가 가입 되어 있는지 확인(ID가 맞는지도 확인)
         UserEntity opUser = this.checkHasUser(user.getStudentNum(), BaseResponseStatus.USER_POST_NOT_SIGN_IN);
-        // PASSWORD 맞는지 확인
-        if(!passwordEncoder.matches(user.getPassword(), opUser.getPassword())) { // 그냥 받아온 password를 넣으면 알아서 암호화해서 비교함.
+        if(!passwordEncoder.matches(user.getPassword(), opUser.getPassword())) {
             throw new BaseException(BaseResponseStatus.USER_POST_NOT_SIGN_IN);
         }
         return token(user);
@@ -104,18 +102,14 @@ public class UserService {
     }
 
     public TokenDTO reissue(TokenDTO tokenRequestDto, HttpServletRequest request) throws BaseException{
-        // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken(), request)) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH);
         }
-        // 2. Access Token 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getAccessToken());
-        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
         RefreshTokenEntity refreshToken = refreshTokenRepository.findByKeyId(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-        // 4. Refresh Token 일치하는지 검사
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.LOGOUT_USER));
         if (!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new BaseException(BaseResponseStatus.DO_NOT_HAVE_REFRESH);
         }
         // 5. 새로운 토큰 생성
         TokenDTO tokenDto = tokenProvider.generateTokenDto(authentication, authentication.getName());
