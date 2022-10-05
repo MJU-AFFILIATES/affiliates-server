@@ -36,7 +36,7 @@ public class StoreService {
     }
 
     public void storeReview(Principal principal, StoreDTO.StoreReview storeReview) throws BaseException{
-        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
+        UserEntity user = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_HEADER);
         if(storeReview.getStoreIdx() == null){
             throw new BaseException(BaseResponseStatus.REVIEW_STOREID_EMPTY);
         }
@@ -45,7 +45,7 @@ public class StoreService {
         }
         StoreEntity store = this.storeRepository.findByStoreIdx(storeReview.getStoreIdx());
         ReviewEntity review = ReviewEntity.builder()
-                .userIdx(optional.get())
+                .userIdx(user)
                 .storeIdx(store)
                 .review(storeReview.getReview())
                 .star(storeReview.getStar())
@@ -79,8 +79,8 @@ public class StoreService {
     }
 
     public List<StoreDTO.UserReviewList> getUserReviewList(Principal principal) throws BaseException{
-        Optional<UserEntity> optional = this.userRepository.findByStudentNum(principal.getName());
-        List<ReviewEntity> reviewEntity = reviewRepository.findByUserIdxOrderByCreatedDate(optional.get());
+        UserEntity user = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_HEADER);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByUserIdxOrderByCreatedDate(user);
         List<StoreDTO.UserReviewList> reviewList = new ArrayList<>();
 
         for(ReviewEntity i : reviewEntity){
@@ -89,7 +89,7 @@ public class StoreService {
             review.setName(i.getStoreIdx().getName());
             review.setCategory(i.getStoreIdx().getCategoryEnum());
             review.setImgUrl(i.getStoreIdx().getImgUrl());
-            review.setNickName(optional.get().getNickName());
+            review.setNickName(user.getNickName());
             review.setReview(i.getReview());
             review.setStar(i.getStar());
             review.setCreatedDate(i.getCreatedDate());
@@ -100,7 +100,6 @@ public class StoreService {
 
 
     public List<StoreDTO.ReviewList> getReviewList(Long storeIdx) throws BaseException{
-
         StoreEntity storeEntity = storeRepository.findByStoreIdx(storeIdx);
         List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(storeEntity);
         List<StoreDTO.ReviewList> reviewList = new ArrayList<>();
@@ -167,12 +166,9 @@ public class StoreService {
             sum += (double)reviewEntity.get(i).getStar();
         }
 
-        if(reviewEntity.size() == 0){
-            avg = 0;
-        }else{
+        if(reviewEntity.size() != 0){
             avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
         }
-
 
         List<StoreDTO.Store> list = new ArrayList<>();
         StoreDTO.Store storeList = new StoreDTO.Store();
@@ -189,5 +185,10 @@ public class StoreService {
         list.add(storeList);
 
         return list;
+    }
+
+    public UserEntity checkHasUser(String studentNum, BaseResponseStatus status) throws BaseException {
+        return this.userRepository.findByStudentNum(studentNum)
+                .orElseThrow(() -> new BaseException(status));
     }
 }

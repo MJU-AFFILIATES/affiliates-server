@@ -26,6 +26,8 @@ public enum BaseResponseStatus {
     CAN_NOT_ACCESS_STORE_FROM_CATEGORY(false, 2012, "카테고리 값이 null이거나, 있는 카테고리 값이 아닙니다."),
     NULL_PATH(false, 2013, "PathVariable을 입력해주세요."),
     DO_NOT_HAVE_REFRESH(false, 2014, "REFRESH TOKEN 값이 없습니다."),
+    LOGOUT_USER(false, 2015, "로그아웃 된 사용자입니다."),
+    CORRECT_USER(false, 2016, "User 정보가 일치하지 않습니다."),
     /*
      *5000: database error
      */
