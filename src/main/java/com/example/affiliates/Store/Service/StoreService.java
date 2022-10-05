@@ -166,7 +166,9 @@ public class StoreService {
         for(int i=0; i<reviewEntity.size(); i++){
             sum += (double)reviewEntity.get(i).getStar();
         }
-        avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
+        if(sum>0){
+            avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
+        }
 
         List<StoreDTO.Store> list = new ArrayList<>();
         StoreDTO.Store storeList = new StoreDTO.Store();
