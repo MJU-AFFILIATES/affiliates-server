@@ -109,25 +109,16 @@ public class StoreService {
             throw new BaseException(BaseResponseStatus.NULL_PATH);
         }
 
-        double avg = 0;
-        double sum = 0;
-        for(int i=0; i<reviewEntity.size(); i++){
-            sum += (double)reviewEntity.get(i).getStar();
-        }
-        avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
-
         for(ReviewEntity i : reviewEntity){
             StoreDTO.ReviewList review = new StoreDTO.ReviewList();
             review.setReviewIdx(i.getReviewIdx());
             review.setStoreIdx(storeIdx);
             review.setName(storeEntity.getName());
             review.setCategory(storeEntity.getCategoryEnum());
-            review.setAvgStar(avg);
             review.setUserIdx(i.getUserIdx().getUserIdx());
             review.setNickName(i.getUserIdx().getNickName());
             review.setReview(i.getReview());
             review.setStar(i.getStar());
-            review.setImgUrl(i.getStoreIdx().getImgUrl());
             review.setCreatedDate(i.getCreatedDate());
             reviewList.add(review);
         }
@@ -168,6 +159,14 @@ public class StoreService {
 
     public List<StoreDTO.Store> getStore(Long storeIdx) throws BaseException{
         StoreEntity store = storeRepository.findByStoreIdx(storeIdx);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(store);
+
+        double avg = 0;
+        double sum = 0;
+        for(int i=0; i<reviewEntity.size(); i++){
+            sum += (double)reviewEntity.get(i).getStar();
+        }
+        avg = Double.parseDouble(String.format("%.2f", sum/(double)reviewEntity.size()));
 
         List<StoreDTO.Store> list = new ArrayList<>();
         StoreDTO.Store storeList = new StoreDTO.Store();
@@ -177,6 +176,7 @@ public class StoreService {
         storeList.setAddress(store.getAddress());
         storeList.setContents(store.getContents());
         storeList.setImgUrl(store.getImgUrl());
+        storeList.setAvgStar(avg);
         StoreDTO.Location location = this.getKakaoApiFromAddress(store.getAddress());
         storeList.setX(location.getX());
         storeList.setY(location.getY());

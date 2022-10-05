@@ -41,11 +41,9 @@ public class StoreDTO {
         private Long storeIdx;
         private String name;
         private CategoryEnum category;
-        private double AvgStar;
         private Long userIdx;
         private String nickName;
         private String review;
-        private String imgUrl;
         private int star;
         private LocalDateTime createdDate;
     }
@@ -90,6 +88,7 @@ public class StoreDTO {
         private String contents;
         private CategoryEnum category;
         private String imgUrl;
+        private double AvgStar;
         private String address;
         private String x;
         private String y;
