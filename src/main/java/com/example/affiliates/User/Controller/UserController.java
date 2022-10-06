@@ -46,6 +46,20 @@ public class UserController {
         }
     }
 
+    @ResponseBody
+    @ApiOperation(value = "MyPage")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "요청에 성공하였습니다."),
+            @ApiResponse(code = 9504, message = "JWT의 값이 없습니다.")
+    })
+    @GetMapping(value = "/myPage")
+    public BaseResponse<UserDTO.Mypage> myPage(Principal principal){
+        try {
+            return new BaseResponse<>(this.userService.myPage(principal));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
 
     /*
     * 장채은 : 로그아웃

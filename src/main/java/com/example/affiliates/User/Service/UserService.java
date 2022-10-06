@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -195,5 +194,11 @@ public class UserService {
         }catch (Exception e){
             throw new BaseException(BaseResponseStatus.DELETE_USER_ERROR);
         }
+    }
+
+    public UserDTO.Mypage myPage(Principal principal) throws BaseException {
+        UserEntity userEntity = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_JWT);
+        return new UserDTO.Mypage(userEntity.getStudentNum(), userEntity.getNickName());
+
     }
 }
