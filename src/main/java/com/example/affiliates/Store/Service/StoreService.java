@@ -80,7 +80,7 @@ public class StoreService {
 
     public List<StoreDTO.UserReviewList> getUserReviewList(Principal principal) throws BaseException{
         UserEntity user = this.checkHasUser(principal.getName(), BaseResponseStatus.NULL_HEADER);
-        List<ReviewEntity> reviewEntity = reviewRepository.findByUserIdxOrderByCreatedDate(user);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByUserIdxOrderByCreatedDateDesc(user);
         List<StoreDTO.UserReviewList> reviewList = new ArrayList<>();
 
         for(ReviewEntity i : reviewEntity){
@@ -101,7 +101,7 @@ public class StoreService {
 
     public List<StoreDTO.ReviewList> getReviewList(Long storeIdx) throws BaseException{
         StoreEntity storeEntity = storeRepository.findByStoreIdx(storeIdx);
-        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(storeEntity);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDateDesc(storeEntity);
         List<StoreDTO.ReviewList> reviewList = new ArrayList<>();
 
         if(storeIdx == null){
@@ -158,7 +158,7 @@ public class StoreService {
 
     public List<StoreDTO.Store> getStore(Long storeIdx) throws BaseException{
         StoreEntity store = storeRepository.findByStoreIdx(storeIdx);
-        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDate(store);
+        List<ReviewEntity> reviewEntity = reviewRepository.findByStoreIdxOrderByCreatedDateDesc(store);
 
         double avg = 0;
         double sum = 0;
